@@ -7,7 +7,7 @@ Reusable agent skills for Codex and other Agent Skills-compatible tools.
 | Skill | Purpose |
 | --- | --- |
 | `tldr` | Keeps every user-facing response concise and easy to scan. |
-| `1password` | Reads one exact secret field through the 1Password CLI. |
+| `1password` | Finds secrets narrowly and injects them into trusted commands without exposing their values. |
 
 ## Install
 
@@ -43,7 +43,7 @@ The installer detects updates from repository content changes. The version in ea
 
 ## Releases
 
-The latest stable release is on `main`. Releases use semantic version tags such as `v1.0.0`; changes are recorded in [CHANGELOG.md](CHANGELOG.md).
+The latest stable release is on `main`. Releases use semantic version tags such as `v1.1.0`; changes are recorded in [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
