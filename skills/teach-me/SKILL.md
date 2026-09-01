@@ -4,7 +4,7 @@ description: Teaches a topic from a named source at the learner's level — one 
 license: MIT
 metadata:
   author: okharedia
-  version: "1.0.1"
+  version: "1.0.2"
 ---
 
 # Teach me
@@ -113,7 +113,7 @@ Keep in it:
 - Where you paused
 - What is solid vs taught-but-not-solid
 - The running example (if the source has one)
-- Chapters in source order
+- Chapters in **reading** order (not necessarily the order they were taught)
 - Glossary they own
 - Next topics, plus anything explicitly deferred
 
@@ -139,9 +139,52 @@ Every update to `notes/book.md` gets a git commit. That includes intake (creatin
 
 ---
 
-## 4. Resume
+## 4. Editor pass
 
-1. Read `notes/book.md`. Summarize what has been learned. Announce the next lesson.
+Teaching order follows the source and the learner’s questions. The notebook is a book. Those orders will diverge. After a stretch lands in `notes/book.md`, put on an **editor hat** and reread the whole file as a new reader who was never in the chat.
+
+This is the same agent, a second pass — not a second process. Do not spawn an editor subagent.
+
+### When
+
+- After a solid checkpoint, or after a chapter was rewritten for accuracy.
+- Before the notebook commit when it is the same sitting. If you only notice a reading problem later, run the pass then and make its own commit.
+
+Do not editor-pass a chapter that is still “taught, not yet solid” as if it were finished. You may still move a **thin prerequisite** that a later solid chapter depends on.
+
+### What to do
+
+Reread from the top. Then, only if it helps a new reader:
+
+- **Reorder** so each idea has what it needs. Example: a one-line “every statement runs in a transaction; the server assigns an xid” belongs before `xmin`, even if questions reached xid later.
+- **Add a missing prerequisite** — the smallest slice that makes the next paragraph readable, not the full later chapter.
+- **Cut repetition** and merge two half-explanations of the same thing.
+- **Leave holes that are deferred.** Point at the Deferred list; do not fill module 5 into module 1.
+
+Teaching stays in source order next session. Do not start teaching in the new book order.
+
+### What not to do
+
+- Do not change meaning or invent content the source did not teach.
+- Do not record wrong guesses.
+- Do not write editor commentary, TODOs, or “moved this because…” into the book.
+- Do not expand a deferred topic.
+- Do not reorder just to match the conversation.
+
+### What the two hats tell each other
+
+Nothing in `notes/book.md`. The commit message is the log:
+
+- Teacher: what became solid, what was a side question, what stayed deferred.
+- Editor: what moved or was added as a prerequisite, and what the next reading hole is (so the teacher does not re-teach it).
+
+Example: `Add xmin versions; move autocommit/xid in front. Next reading hole is TOAST.`
+
+---
+
+## 5. Resume
+
+1. Read `notes/book.md`. Summarize what has been learned. Announce the next lesson **from the source**, not from a reshuffled chapter list.
 2. Wait. If they have questions, stay on this stretch.
 3. If they want to continue: teach the next untaught piece of the current module, slowly, from the source.
-4. Update `notes/book.md` when something is actually learned or the model gets better, then **commit that change**.
+4. Update `notes/book.md` when something is actually learned or the model gets better. Run the **editor pass**, then **commit**.
