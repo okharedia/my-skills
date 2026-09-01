@@ -4,7 +4,7 @@ description: Teaches a topic from a named source at the learner's level — one 
 license: MIT
 metadata:
   author: okharedia
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 # Teach me
@@ -84,7 +84,7 @@ Reuse diagrams from `notes/book.md` when they still fit. Invent or replace a dia
 
 ### Mental models
 
-Protect the model you give them. It must be accurate, not fictionally wrong. Simpler models are fine; wrong terms and sloppy analogies are not. If you suspect their model is wrong, say so, and show wrong vs real in two diagrams.
+Protect the model you give them. It must be accurate, not fictionally wrong. Simpler models are fine; wrong terms and sloppy analogies are not. If you suspect their model is wrong, say so in the conversation, and show wrong vs real in two diagrams. Do not copy the wrong picture into the notebook.
 
 ### Voice
 
@@ -115,10 +115,19 @@ Keep in it:
 - The running example (if the source has one)
 - Chapters in source order
 - Glossary they own
-- Corrections so the next session does not re-introduce a lie
 - Next topics, plus anything explicitly deferred
 
 Do not keep session chatter or teaching rules in the notebook.
+
+### Write the correct model only
+
+The notebook is for a future reader, including the learner later. Do not put their wrong guesses in it.
+
+Correct misunderstandings in the conversation. In `notes/book.md`, write how it actually works.
+
+Do not record a confusion they never need to relive. Bad: “There is no index process that sends ctid to a separate disk process.” Good: one backend walks the index file, then the heap file.
+
+If an earlier lesson oversimplified, rewrite the chapter to the precise version. Do not keep a “we used to say X” trail.
 
 ### Version the notebook
 
