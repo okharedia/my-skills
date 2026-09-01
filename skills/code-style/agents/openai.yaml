@@ -1,0 +1,5 @@
+interface:
+  display_name: "Code Style"
+  short_description: "Bootstrap deterministic formatter and linter config for JS/TS, Go, or Python"
+policy:
+  allow_implicit_invocation: false

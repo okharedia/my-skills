@@ -1,0 +1,19 @@
+{
+	"editor.formatOnSave": true,
+	"editor.tabSize": 8,
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+	"go.formatTool": "gofmt",
+	"go.lintTool": "golangci-lint",
+	"go.lintOnSave": "package",
+	"go.lintFlags": ["--fast"],
+	"[go]": {
+		"editor.defaultFormatter": "golang.go",
+		"editor.codeActionsOnSave": {
+			"source.organizeImports": "explicit"
+		}
+	},
+	"[go.mod]": {
+		"editor.defaultFormatter": "golang.go"
+	}
+}
