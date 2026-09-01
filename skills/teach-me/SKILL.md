@@ -4,7 +4,7 @@ description: Teaches a topic from a named source at the learner's level — one 
 license: MIT
 metadata:
   author: okharedia
-  version: "1.0.2"
+  version: "1.0.3"
 ---
 
 # Teach me
@@ -139,18 +139,16 @@ Every update to `notes/book.md` gets a git commit. That includes intake (creatin
 
 ---
 
-## 4. Editor pass
+## 4. Reread the notebook
 
-Teaching order follows the source and the learner’s questions. The notebook is a book. Those orders will diverge. After a stretch lands in `notes/book.md`, put on an **editor hat** and reread the whole file as a new reader who was never in the chat.
-
-This is the same agent, a second pass — not a second process. Do not spawn an editor subagent.
+Teaching order follows the source and the learner’s questions. The notebook is a book. Those orders will diverge. After a stretch lands in `notes/book.md`, reread the whole file as a new reader who was never in the chat.
 
 ### When
 
 - After a solid checkpoint, or after a chapter was rewritten for accuracy.
-- Before the notebook commit when it is the same sitting. If you only notice a reading problem later, run the pass then and make its own commit.
+- Before the notebook commit when it is the same sitting. If you only notice a reading problem later, reread then and make its own commit.
 
-Do not editor-pass a chapter that is still “taught, not yet solid” as if it were finished. You may still move a **thin prerequisite** that a later solid chapter depends on.
+Do not treat a chapter that is still “taught, not yet solid” as finished. You may still move a **thin prerequisite** that a later solid chapter depends on.
 
 ### What to do
 
@@ -167,16 +165,11 @@ Teaching stays in source order next session. Do not start teaching in the new bo
 
 - Do not change meaning or invent content the source did not teach.
 - Do not record wrong guesses.
-- Do not write editor commentary, TODOs, or “moved this because…” into the book.
+- Do not write commentary, TODOs, or “moved this because…” into the book.
 - Do not expand a deferred topic.
 - Do not reorder just to match the conversation.
 
-### What the two hats tell each other
-
-Nothing in `notes/book.md`. The commit message is the log:
-
-- Teacher: what became solid, what was a side question, what stayed deferred.
-- Editor: what moved or was added as a prerequisite, and what the next reading hole is (so the teacher does not re-teach it).
+The commit message is the log: what became solid, what moved or was added as a prerequisite, what stayed deferred, and what the next reading hole is.
 
 Example: `Add xmin versions; move autocommit/xid in front. Next reading hole is TOAST.`
 
@@ -187,4 +180,4 @@ Example: `Add xmin versions; move autocommit/xid in front. Next reading hole is 
 1. Read `notes/book.md`. Summarize what has been learned. Announce the next lesson **from the source**, not from a reshuffled chapter list.
 2. Wait. If they have questions, stay on this stretch.
 3. If they want to continue: teach the next untaught piece of the current module, slowly, from the source.
-4. Update `notes/book.md` when something is actually learned or the model gets better. Run the **editor pass**, then **commit**.
+4. Update `notes/book.md` when something is actually learned or the model gets better. Reread the notebook as a new reader, then **commit**.
