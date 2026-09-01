@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0 - 2026-09-01
+
+- Publish `teach-me` for source-following, paced teaching with a versioned `notes/book.md`.
+
 ## 1.1.0 - 2026-08-31
 
 - Replace standalone secret reads with masked `op run` injection into trusted commands.
