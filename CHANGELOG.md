@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.1 - 2026-09-02
+
+- `1password` 2.0.1: document that setup puts the token in process arguments and that use puts it in a shell variable.
+- Restore narrow item discovery from 1.1.0 (tags, categories, local title filter).
+- Fail closed on a missing keychain item instead of an empty token; every `op` example is one script (load, validate, invoke, unset, exit).
+- Setup refuses a failed or empty read so it cannot overwrite an existing keychain item, and preserves the `security` exit status.
+- Restore least-privilege service-account guidance as the access-control boundary.
+- Define `trusted-command` and state `op run` masking limits in the description.
+
 ## 2.0.0 - 2026-09-02
 
 - `1password` 2.0.0: authenticate with a service-account token read from the macOS login keychain.
