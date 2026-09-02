@@ -8,7 +8,7 @@ Reusable agent skills for Codex and other Agent Skills-compatible tools.
 | --- | --- |
 | `tldr` | Keeps every user-facing response concise and easy to scan. |
 | `teach-me` | Teaches from a named source at the learner's level, with a versioned `notes/book.md`. |
-| `1password` | Injects 1Password secrets into trusted commands without exposing their values. |
+| `1password` | Injects 1Password secret references into trusted commands. The child receives plaintext. |
 
 ## Install
 
@@ -34,7 +34,7 @@ Omit `--global` for a project-only installation.
 
 ### 1Password prerequisites
 
-The `1password` skill needs the 1Password CLI and a service-account token stored in the login keychain. The setup command is in [the skill](skills/1password/SKILL.md); run it yourself and never let an agent handle the token.
+The `1password` skill needs macOS, 1Password CLI 2.18 or later, and a dedicated read-only service account limited to the vaults the agent may see. The setup command is in [the skill](skills/1password/SKILL.md); run it yourself and never let an agent handle the token. The child process receives plaintext secrets; `op run` masking is stdout/stderr exact-string only.
 
 ## Update
 
