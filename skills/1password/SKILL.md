@@ -18,21 +18,22 @@ Each `op` snippet below is one complete script. Run it in a single shell. Do not
 
 ## One-time setup
 
-The user runs this in their own Terminal and pastes the `ops_...` token at the prompt. The subshell exits on an empty read so `security` never runs; a blank paste cannot overwrite an existing item.
+The user runs this in their own Terminal and pastes the `ops_...` token at the prompt. The subshell exits on a failed or empty read so `security` never runs; EOF or a blank paste cannot overwrite an existing item.
 
 ```sh
 (
   printf 'Token: '
   stty -echo
   trap 'stty echo; unset T' EXIT
-  IFS= read -r T || true
-  if [ -z "$T" ]; then
+  if ! IFS= read -r T || [ -z "$T" ]; then
     echo "No token entered; keychain unchanged." >&2
     exit 1
   fi
   printf '\n'
   security add-generic-password -U -a "$USER" -s op-agent -w "$T"
+  status=$?
   unset T
+  exit "$status"
 )
 ```
 
