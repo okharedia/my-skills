@@ -8,7 +8,7 @@ Reusable agent skills for Codex and other Agent Skills-compatible tools.
 | --- | --- |
 | `tldr` | Keeps every user-facing response concise and easy to scan. |
 | `teach-me` | Teaches from a named source at the learner's level, with a versioned `notes/book.md`. |
-| `1password` | Finds secrets narrowly and injects them into trusted commands without exposing their values. |
+| `1password` | Injects 1Password secrets into trusted commands without exposing their values. |
 
 ## Install
 
@@ -32,6 +32,10 @@ npx skills add okharedia/my-skills --skill teach-me --agent codex --global
 
 Omit `--global` for a project-only installation.
 
+### 1Password prerequisites
+
+The `1password` skill needs the 1Password CLI and a service-account token stored in the login keychain. The setup command is in [the skill](skills/1password/SKILL.md); run it yourself and never let an agent handle the token.
+
 ## Update
 
 Update global installations from the latest release on `main`:
@@ -44,7 +48,7 @@ The installer detects updates from repository content changes. The version in ea
 
 ## Releases
 
-The latest stable release is on `main`. Releases use semantic version tags such as `v1.1.0`; changes are recorded in [CHANGELOG.md](CHANGELOG.md).
+The latest stable release is on `main`. Releases use semantic version tags such as `v2.0.0`; changes are recorded in [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

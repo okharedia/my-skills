@@ -1,67 +1,58 @@
 ---
 name: 1password
-description: Finds and supplies secrets from 1Password to trusted commands without exposing their values in agent output. Use when a command needs an API key, token, credential, or other secret stored in 1Password.
+description: Reads secrets from 1Password and injects them into trusted commands without exposing their values. Use when a command needs an API key, token, credential, or other secret stored in 1Password.
 license: MIT
-compatibility: Requires the 1Password CLI. Free-text title filtering also requires jq.
+compatibility: Requires macOS, the 1Password CLI, and a service-account token stored in the login keychain.
 metadata:
   author: okharedia
-  version: "1.1.0"
+  version: "2.0.0"
 ---
 
 # 1Password
 
-Use the `op` CLI directly. Assume authentication is already configured. If `op` is unavailable or authentication fails, stop and ask the user to fix the setup. Do not sign in, configure 1Password, or request credentials in chat.
+Authentication uses a 1Password service-account token kept in the macOS login keychain.
 
-## Use a known secret
+## One-time setup
 
-Inject an exact secret reference only into the trusted command that needs it:
+The user runs this themselves and pastes the `ops_...` token at the prompt. It is not echoed:
 
 ```sh
-API_TOKEN='op://Vault/Item/field' \
+printf 'Token: '; stty -echo; IFS= read -r T; stty echo; echo
+security add-generic-password -U -a "$USER" -s op-agent -w "$T"; unset T
+```
+
+The interactive `security add-generic-password -w` prompt truncates input at 128 characters, which silently stores a broken token.
+
+## Use a secret
+
+Read the token from the keychain into the command's environment and inject the secret by reference. Neither value is ever printed:
+
+```sh
+OP_SERVICE_ACCOUNT_TOKEN="$(security find-generic-password -a "$USER" -s op-agent -w)" \
+OP_BIOMETRIC_UNLOCK_ENABLED=false \
+API_TOKEN='op://Vault/Item/credential' \
   op run -- trusted-command
 ```
 
-`op run` resolves the reference for its child process and masks exact secret values in output by default. Use only trusted commands. Never use `--no-masking`.
+`op run` masks the secret only when the command prints its exact value to stdout or stderr. A value that is written to a file, sent over the network, encoded, or printed in part is not masked. The command receives the real secret in its environment, so run only commands you trust.
 
-## Find the narrowest match
+`OP_BIOMETRIC_UNLOCK_ENABLED=false` turns off 1Password's desktop app integration. If the keychain read fails, the command substitution yields an empty string rather than an error, and `op` reads an empty token as "no service account" — signing in through the desktop app instead, under a different account with different vaults. This flag makes it fail instead.
 
-Use the least broad discovery command that can answer the request.
+## Find an item
 
-If the vault is unknown and its name is necessary:
+Prefix these with the same `OP_SERVICE_ACCOUNT_TOKEN` and `OP_BIOMETRIC_UNLOCK_ENABLED` assignments:
 
 ```sh
 op vault list
-```
-
-If the exact item name is known, inspect it without `--reveal`:
-
-```sh
+op item list --vault "Vault"
 op item get "Item" --vault "Vault"
 ```
 
-This may display item metadata and non-concealed fields. Use it only when that output is needed.
 
-If a relevant tag or category is known, filter at the source:
 
-```sh
-op item list --vault "Vault" --tags "project-name"
-op item list --vault "Vault" --categories "API Credential"
-```
+## Rules
 
-The CLI has no free-text title-search flag. When the user asks to search a known vault, filter item metadata locally and return only IDs and titles:
-
-```sh
-op item list --vault "Vault" --format=json |
-  jq -r --arg q "search-term" \
-    '.[] | select(.title | ascii_downcase | contains($q | ascii_downcase)) | [.id, .title] | @tsv'
-```
-
-This narrows what appears in agent output, but `op` still retrieves all item metadata for that vault locally. It is not an access-control boundary. If nothing matches, ask the user instead of falling back to an unfiltered item list.
-
-## Safety
-
-- Prefer an exact item or secret reference over vault enumeration.
-- Use only read-only discovery commands and `op run`. Do not create, modify, delete, move, or share items.
-- Never run `op read` by itself or use `--reveal` or `--no-masking`.
-- Never print, log, paste into chat, commit, or persist a resolved secret.
-- Use only preconfigured, least-privileged access. A dedicated agent vault or vault-limited service account is the real security boundary.
+- Never print, log, echo, or commit the token or a resolved secret.
+- Never use `op read` alone, `--reveal`, `--no-masking`, or `OP_RUN_NO_MASKING`.
+- Read only. Do not create, modify, delete, move, or share items.
+- If the keychain item is missing or authentication fails, stop and tell the user to redo setup. Do not fall back to `op signin`, an environment token, or asking for a token in chat.
