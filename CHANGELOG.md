@@ -2,7 +2,7 @@
 
 ## 2.0.2 - 2026-09-03
 
-- `tldr` 1.0.1: add a writing rule to remove all mannered prose (flourish, throat-clearing, hedging, performed enthusiasm).
+- `tldr` 1.0.1: add a writing rule to remove all mannered prose.
 
 ## 2.0.1 - 2026-09-02
 
