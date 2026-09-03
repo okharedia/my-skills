@@ -4,7 +4,7 @@ description: Keeps every user-facing response short, clear, and easy to scan. Mu
 license: MIT
 metadata:
   author: okharedia
-  version: "1.0.0"
+  version: "1.0.1"
 ---
 
 # TLDR
@@ -16,6 +16,7 @@ Make every response easy to absorb on the first read.
 - Lead with the answer or outcome.
 - Use the fewest words that preserve the important information.
 - Prefer simple language, short paragraphs, and natural structure.
+- Remove all mannered prose.
 - Avoid walls of text and unnecessary background.
 - Use headings, bullets, tables, or diagrams only when they make the response easier to understand.
 - When a relationship is hard to explain linearly, prefer a small visual. The user is a visual learner.
