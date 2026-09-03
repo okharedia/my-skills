@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.2 - 2026-09-03
+
+- `tldr` 1.0.1: add a writing rule to remove all mannered prose (flourish, throat-clearing, hedging, performed enthusiasm).
+
 ## 2.0.1 - 2026-09-02
 
 - `1password` 2.0.1: document that setup puts the token in process arguments and that use puts it in a shell variable.
