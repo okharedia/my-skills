@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires macOS, 1Password CLI 2.18 or later, and a service-account token stored in the login keychain. Free-text title filtering also requires jq.
 metadata:
   author: okharedia
-  version: "2.0.1"
+  version: "2.0.3"
 ---
 
 # 1Password
@@ -31,9 +31,9 @@ The user runs this in their own Terminal and pastes the `ops_...` token at the p
   fi
   printf '\n'
   security add-generic-password -U -a "$USER" -s op-agent -w "$T"
-  status=$?
+  rc=$?
   unset T
-  exit "$status"
+  exit "$rc"
 )
 ```
 
@@ -42,6 +42,8 @@ The interactive `security add-generic-password -w` prompt (no value) truncates a
 ## Use a secret
 
 Load, validate, invoke, capture status, and `unset` in this one block. If the keychain read fails or is empty, `exit 1` before `op`. Do not fall back to `op signin`, an environment token, or the desktop app.
+
+The exit status is held in `rc`, not `status`: `status` is a read-only special variable in zsh, and assigning to it aborts the block with `read-only variable: status` after the real work has already run.
 
 ```sh
 if ! token="$(security find-generic-password -a "$USER" -s op-agent -w)" || [ -z "$token" ]; then
@@ -52,16 +54,27 @@ OP_SERVICE_ACCOUNT_TOKEN="$token" \
 OP_BIOMETRIC_UNLOCK_ENABLED=false \
 API_TOKEN='op://Vault/Item/password' \
   op run -- trusted-command
-status=$?
+rc=$?
 unset token
-exit "$status"
+exit "$rc"
 ```
 
 `OP_BIOMETRIC_UNLOCK_ENABLED=false` disables desktop-app integration. A failed keychain read otherwise becomes an empty `OP_SERVICE_ACCOUNT_TOKEN`, which `op` treats as "no service account" and may sign in as the human user with every vault.
 
 Field names: `password` for Login/Password items, `credential` for API Credential items. Use the field the user named. Do not guess by retrying fields.
 
-`trusted-command` is the smallest executable that must read the secret from its environment. Do not wrap package-manager scripts (`npm test`, `yarn`, `pnpm`), shells (`bash -c`, `sh -c`), `env`, or other untrusted code. Do not put the resolved secret on the command line.
+`trusted-command` is the smallest executable that must read the secret from its environment. Do not wrap package-manager scripts (`npm test`, `yarn`, `pnpm`), `bash -c`, `sh -c`, `env`, a script file on disk, or other untrusted code. Do not put the resolved secret on the command line.
+
+When one task genuinely needs several commands to share the injected environment, `op run -- bash -s` with a single-quoted heredoc is allowed:
+
+```sh
+  op run -- bash -s <<'SCRIPT'
+set -euo pipefail
+# commands, written inline, never saved to disk
+SCRIPT
+```
+
+The quoted delimiter stops the parent shell expanding anything, and stdin keeps the script out of process arguments — which is why `bash -c "$script"` stays forbidden. The script must be written inline in that same block and must be your own; this is not permission to pipe in code from elsewhere.
 
 `op run` sets plaintext in the child environment. It masks the exact secret string on the child's stdout and stderr only. A value written to a file, sent over the network, encoded, or printed in part is not masked.
 
@@ -79,9 +92,9 @@ fi
 OP_SERVICE_ACCOUNT_TOKEN="$token" \
 OP_BIOMETRIC_UNLOCK_ENABLED=false \
   op vault list
-status=$?
+rc=$?
 unset token
-exit "$status"
+exit "$rc"
 ```
 
 If the exact item name is known, inspect it without `--reveal`:
@@ -94,9 +107,9 @@ fi
 OP_SERVICE_ACCOUNT_TOKEN="$token" \
 OP_BIOMETRIC_UNLOCK_ENABLED=false \
   op item get "Item" --vault "Vault"
-status=$?
+rc=$?
 unset token
-exit "$status"
+exit "$rc"
 ```
 
 This may display metadata and non-concealed fields (usernames, URLs, notes). Use it only when that output is needed.
@@ -111,9 +124,9 @@ fi
 OP_SERVICE_ACCOUNT_TOKEN="$token" \
 OP_BIOMETRIC_UNLOCK_ENABLED=false \
   op item list --vault "Vault" --tags "project-name"
-status=$?
+rc=$?
 unset token
-exit "$status"
+exit "$rc"
 ```
 
 ```sh
@@ -124,9 +137,9 @@ fi
 OP_SERVICE_ACCOUNT_TOKEN="$token" \
 OP_BIOMETRIC_UNLOCK_ENABLED=false \
   op item list --vault "Vault" --categories "API Credential"
-status=$?
+rc=$?
 unset token
-exit "$status"
+exit "$rc"
 ```
 
 The CLI has no free-text title-search flag. When the user asks to search a known vault, filter locally and return only IDs and titles:
@@ -142,9 +155,9 @@ OP_BIOMETRIC_UNLOCK_ENABLED=false \
   op item list --vault "Vault" --format=json |
   jq -r --arg q "search-term" \
     '.[] | select(.title | ascii_downcase | contains($q | ascii_downcase)) | [.id, .title] | @tsv'
-status=$?
+rc=$?
 unset token
-exit "$status"
+exit "$rc"
 ```
 
 This narrows agent output, but `op` still retrieves all item metadata for that vault. It is not an access-control boundary. If nothing matches, ask the user instead of falling back to an unfiltered list.

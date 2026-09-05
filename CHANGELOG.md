@@ -1,5 +1,19 @@
 # Changelog
 
+## 2.1.0 - 2026-09-06
+
+- Add `site` 0.3.1: publish private files and static sites to Cloudflare R2 and gate them with
+  Access, as inline Bash using rclone, curl, and jq. Each app is created with an empty allowlist
+  and is readable by nobody until an email is shared in; the API token is the way back in.
+  Upload validates the app name, refuses a non-empty prefix, and refuses a path already covered
+  by another application, then confirms Access gates the new prefix. Remove deletes the policy
+  before purging, so nothing is readable while objects are still being deleted.
+- `1password` 2.0.3: allow `op run -- bash -s` with a single-quoted heredoc, for tasks whose
+  commands must share one injected environment. `bash -c` stays forbidden; it puts the script in
+  process arguments.
+- `1password` 2.0.3: hold the exit status in `rc`. `status` is read-only in zsh, so the
+  documented blocks aborted with an error after the work had already run.
+
 ## 2.0.2 - 2026-09-03
 
 - `tldr` 1.0.1: add a writing rule to remove all mannered prose.
