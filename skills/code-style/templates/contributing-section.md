@@ -102,3 +102,43 @@ async function listDueItems() {
 ```
 
 Wire fake deps in tests (fixed `now`, non-production `dbUrl` / env map) instead of ambient env, wall clock, or shared mutable module state.
+
+## Module / folder structure (backends)
+
+**Scope:** **new backends** (TypeScript modular monolith or similar). Do not apply `src/modules/…` inside frontend apps unless a separate frontend convention says so.
+
+Organize by **durable system domains**, not by technical layer at the top of `src/`, and not by sprint tickets or short-lived features. Shop example: modules like `order` and `billing`.
+
+### Layout
+
+| Area | Role |
+|------|------|
+| `src/modules/<name>/` | Domain modules — **singular** kebab-case folder names for new work |
+| `src/lib/` | Shared utilities, cross-cutting middleware, small multi-module helpers (no full domain) |
+| `src/db/` | DB client, migrations, seed, generated DB types |
+| `src/env.ts` / `src/app.ts` / `src/index.ts` | Env boundary, composition root, process entry |
+
+### Inside a module
+
+Name files `<name>.<role>.ts` as needed:
+
+| Role | File | Notes |
+|------|------|-------|
+| Routes | `<name>.routes.ts` | Thin HTTP/OpenAPI handlers; call repository (or service) factories |
+| Repository | `<name>.repository.ts` | Data-access factories; retrieval verbs follow get/find/list |
+| Schemas | `<name>.schemas.ts` | Request/response schemas for that module’s API |
+| Services | optional | Add only when orchestration beyond routes → repository is needed |
+
+Not every module needs every role (e.g. a `health` module may be routes + schemas only).
+
+### Growth, barrels, tests
+
+- When a domain grows, **nest with subfolders** inside the module — do not split into new top-level modules prematurely.
+- **`index.ts` barrels are good** — prefer importing the module façade over deep private paths.
+- Keep tests in top-level **`test/`**, not co-located under `src/modules/`.
+
+### Do / don’t (short)
+
+**Do:** one module per durable domain; wire routes from `src/app.ts`; share cross-cutting helpers via `src/lib/`; use `Make…` factories and get/find/list on repositories.
+
+**Don’t:** top-level `src/routes/` / `src/repositories/` / `src/services/` across all domains; modules for tickets/feature flags; repository-only modules just to share a helper (use `src/lib/`); force a services layer everywhere; plural folder names for new modules when a singular noun fits (`order`, not `orders`).
